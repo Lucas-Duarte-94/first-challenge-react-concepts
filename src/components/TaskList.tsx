@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import  nextId, { setPrefix } from 'react-id-generator';
 
 import '../styles/tasklist.scss'
 
@@ -13,17 +14,44 @@ interface Task {
 export function TaskList() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [newTaskTitle, setNewTaskTitle] = useState('');
+  setPrefix("");
 
   function handleCreateNewTask() {
     // Crie uma nova task com um id random, não permita criar caso o título seja vazio.
+    if(!newTaskTitle) {
+      alert('Digite seu novo to do!')
+      return;
+    }
+    let newTask = {
+      id: parseInt(nextId()),
+      title: newTaskTitle,
+      isComplete: false,
+    }
+    setTasks([...tasks, newTask])
   }
 
   function handleToggleTaskCompletion(id: number) {
     // Altere entre `true` ou `false` o campo `isComplete` de uma task com dado ID
+    const updatedArray = tasks.map((element) => {
+      if(element.id == id) {
+        if(!element.isComplete){
+          element.isComplete = true;
+          setTasks([element])
+        }else {
+          element.isComplete = false;
+        }
+      }
+      return element;
+    })
+    setTasks(updatedArray)
   }
 
   function handleRemoveTask(id: number) {
     // Remova uma task da listagem pelo ID
+    const filteredArray = tasks.filter((element) => {
+      return element.id != id;
+    })
+    setTasks(filteredArray);
   }
 
   return (
